@@ -1,0 +1,26 @@
+#!/bin/bash
+# Pokemon API Automation Script
+# Fetches data from the Pokemon API and saves it to a file
+
+API_URL="https://pokeapi.co/api/v2/pokemon/pikachu"
+OUTPUT_FILE="data.json"
+ERROR_FILE="error.txt"
+
+# Function to fetch data from the API
+echo "Fetching data from the API..."
+
+# Make API request with curl
+# -s for silent mode, -o to specify output file, -w to write HTTP status code
+response_code = $(curl -s -w "%{http_code}" -o "OUTPUT_FILE" "$API_URL")
+
+# Check if the request was successful (HTTP 200 (OK))
+if [ "$response_code" -eq 200 ]; then
+    echo "Pikachu Data fetched successfully."
+    echo "Saving data to $OUTPUT_FILE"
+    echo "Response Code": $response_code"
+else
+    echo "Failed to fetch data. HTTP status code: $response_code"
+    echo "Saving error message to $ERROR_FILE"
+    echo "Error fetching data from API. HTTP status code: $response_code" > "$ERROR_FILE"
+fi
+# End of script
