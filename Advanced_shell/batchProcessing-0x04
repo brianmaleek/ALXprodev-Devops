@@ -9,10 +9,10 @@ error_file="errors.txt"
 # Clear previous error file
 > "$error_file"
 
+pids=()
 for pokemon in "${pokemon_list[@]}"; do
     output_file="${pokemon}.json"
     echo "Fetching data for $pokemon..."
-    # Fetch in background
     (
         status_code=$(curl -s -w "%{http_code}" -o "$output_file" "$base_url/$pokemon")
         if [ "$status_code" -eq 200 ]; then
@@ -22,9 +22,22 @@ for pokemon in "${pokemon_list[@]}"; do
             rm -f "$output_file"
         fi
     ) &
+    pids+=("$!")
 done
 
-# Wait for all background jobs to finish
-wait
+# Wait up to 10 seconds for all jobs, then kill any still running
+timeout=10
+end_time=$((SECONDS+timeout))
+for pid in "${pids[@]}"; do
+    while kill -0 "$pid" 2>/dev/null; do
+        if [ $SECONDS -ge $end_time ]; then
+            kill "$pid" 2>/dev/null
+            echo "Process $pid killed due to timeout." >> "$error_file"
+            break
+        fi
+        sleep 1
+    done
+    wait "$pid" 2>/dev/null
+done
 
 echo "Parallel batch processing completed. Check .json files and $error_file for details."
