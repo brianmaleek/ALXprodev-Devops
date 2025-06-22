@@ -15,12 +15,12 @@ height=$(jq -r '.height' "$file_path")
 weight=$(jq -r '.weight' "$file_path")
 
 # Convert height and weight to meters and kilograms
-height_m=$(echo "$height" | awk '{printf "%.1f", $1 / 10}')
-weight_kg=$(echo "$weight" | awk '{printf "%.0f", $1 / 10}')
+formatted_height=$(echo "$height" | awk '{printf "%.1f", $1 / 10}')
+formatted_weight=$(echo "$weight" | awk '{printf "%.0f", $1 / 10}')
 
 # Capitalize name and type
-name_cap=$(echo "$name" | sed 's/.*/\u&/')
-type_cap=$(echo "$type" | sed 's/.*/\u&/')
+name=$(echo "$name" | sed 's/.*/\u&/')
+type=$(echo "$type" | sed 's/.*/\u&/')
 
-# Print in required format
-echo "\"$name_cap is of type $type_cap, weighs ${weight_kg}kg, and is ${height_m}m tall.\""
+# Print in required format (without extra quotes)
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
