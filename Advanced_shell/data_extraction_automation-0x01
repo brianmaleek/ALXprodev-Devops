@@ -1,0 +1,26 @@
+#!/bin/bash
+# Script to extract Pikachu's name, type, weight, and height from data.json
+
+file_path="data.json"
+# Check if the file exists
+if [ ! -f "$file_path" ]; then
+    echo "File $file_path does not exist."
+    exit 1
+fi
+
+# Extract fields using jq
+name=$(jq -r '.name' "$file_path")
+type=$(jq -r '.types[0].type.name' "$file_path")
+height=$(jq -r '.height' "$file_path")
+weight=$(jq -r '.weight' "$file_path")
+
+# Convert height and weight to meters and kilograms
+height_m=$(echo "$height" | awk '{printf "%.1f", $1 / 10}')
+weight_kg=$(echo "$weight" | awk '{printf "%.0f", $1 / 10}')
+
+# Capitalize name and type
+name_cap=$(echo "$name" | sed 's/.*/\u&/')
+type_cap=$(echo "$type" | sed 's/.*/\u&/')
+
+# Print in required format
+echo "\"$name_cap is of type $type_cap, weighs ${weight_kg}kg, and is ${height_m}m tall.\""
