@@ -4,7 +4,7 @@
 
 API_URL="https://pokeapi.co/api/v2/pokemon/pikachu"
 OUTPUT_FILE="data.json"
-ERROR_FILE="error.txt"
+ERROR_FILE="errors.txt"
 
 # Function to fetch data from the API
 echo "Fetching data from the API..."
